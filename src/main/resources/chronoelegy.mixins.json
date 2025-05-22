@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "package": "chronoelegy.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "EntityMixin",
+    "MobEntityMixin"
+  ],
+  "client": [
+    "CameraMixin",
+    "GameRendererMixin",
+    "HudMixin",
+    "ItemRendererMixin",
+    "MinecraftClientMixin",
+    "ScreenMixin",
+    "TitleScreenMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+	}
+}

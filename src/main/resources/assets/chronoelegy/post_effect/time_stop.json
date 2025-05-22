@@ -1,0 +1,41 @@
+{
+  "targets": {
+    "swap": {}
+  },
+  "passes": [
+    {
+      "vertex_shader": "minecraft:post/sobel",
+      "fragment_shader": "chronoelegy:post/grayscale",
+      "inputs": [
+        {
+          "sampler_name": "In",
+          "target": "minecraft:main"
+        }
+      ],
+      "output": "swap",
+      "uniforms": [
+        {
+          "name": "Strength",
+          "type": "float"
+        }
+      ]
+    },
+    {
+      "vertex_shader": "minecraft:post/sobel",
+      "fragment_shader": "chronoelegy:post/chromatic_abbreviation",
+      "inputs": [
+        {
+          "sampler_name": "In",
+          "target": "swap"
+        }
+      ],
+      "output": "minecraft:main",
+      "uniforms": [
+        {
+          "name": "Strength",
+          "type": "float"
+        }
+      ]
+    }
+  ]
+}

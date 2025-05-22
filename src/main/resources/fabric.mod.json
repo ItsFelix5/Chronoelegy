@@ -1,0 +1,27 @@
+{
+	"schemaVersion": 1,
+	"id": "chronoelegy",
+	"version": "${version}",
+	"name": "Chronoelegy",
+	"description": "TODO",
+	"authors": ["ItsFelix5"],
+	"contact": {
+		"homepage": "TODO",
+		"sources": "TODO"
+	},
+	"license": "MIT",
+	"environment": "*",
+	"entrypoints": {
+		"main": ["chronoelegy.Main"],
+		"client": ["chronoelegy.Client"],
+		"fabric-datagen": ["chronoelegy.DataGen"]
+	},
+	"mixins": ["chronoelegy.mixins.json"],
+	"accessWidener": "chronoelegy.accesswidener",
+	"depends": {
+		"fabricloader": ">=0.16.13",
+		"minecraft": "~1.21.5",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}

@@ -1,0 +1,150 @@
+{
+  "targets": {
+    "swap1": {},
+    "swap2": {},
+    "swap3": {}
+  },
+  "passes": [
+    {
+      "vertex_shader": "minecraft:post/sobel",
+      "fragment_shader": "chronoelegy:post/ssao",
+      "inputs": [
+        {
+          "sampler_name": "In",
+          "target": "minecraft:main"
+        },
+        {
+          "sampler_name": "Depth",
+          "target": "minecraft:main",
+          "use_depth_buffer": true
+        }
+      ],
+      "output": "swap1"
+    },
+    {
+      "vertex_shader": "minecraft:post/sobel",
+      "fragment_shader": "chronoelegy:post/depth",
+      "inputs": [
+        {
+          "sampler_name": "In",
+          "target": "swap1"
+        },
+        {
+          "sampler_name": "Depth",
+          "target": "minecraft:main",
+          "use_depth_buffer": true
+        }
+      ],
+      "output": "swap2",
+      "uniforms": [
+        {
+          "name": "BlurDir",
+          "type": "vec2",
+          "values": [1, 0]
+        }
+      ]
+    },
+    {
+      "vertex_shader": "minecraft:post/sobel",
+      "fragment_shader": "chronoelegy:post/depth",
+      "inputs": [
+        {
+          "sampler_name": "In",
+          "target": "swap1"
+        },
+        {
+          "sampler_name": "Depth",
+          "target": "minecraft:main",
+          "use_depth_buffer": true
+        }
+      ],
+      "output": "swap3",
+      "uniforms": [
+        {
+          "name": "BlurDir",
+          "type": "vec2",
+          "values": [0, 1]
+        }
+      ]
+    },
+    {
+      "vertex_shader": "minecraft:post/sobel",
+      "fragment_shader": "chronoelegy:post/brightness",
+      "inputs": [
+        {
+          "sampler_name": "In",
+          "target": "swap3"
+        }
+      ],
+      "output": "swap1"
+    },
+    {
+      "vertex_shader": "minecraft:post/sobel",
+      "fragment_shader": "chronoelegy:post/blur",
+      "inputs": [
+        {
+          "sampler_name": "In",
+          "target": "swap1"
+        }
+      ],
+      "output": "swap2",
+      "uniforms": [
+        {
+          "name": "BlurDir",
+          "type": "vec2",
+          "values": [1, 0]
+        }
+      ]
+    },
+    {
+      "vertex_shader": "minecraft:post/sobel",
+      "fragment_shader": "chronoelegy:post/blur",
+      "inputs": [
+        {
+          "sampler_name": "In",
+          "target": "swap2"
+        }
+      ],
+      "output": "swap1",
+      "uniforms": [
+        {
+          "name": "BlurDir",
+          "type": "vec2",
+          "values": [0, 1]
+        }
+      ]
+    },
+    {
+      "vertex_shader": "minecraft:post/sobel",
+      "fragment_shader": "chronoelegy:post/bloom",
+      "inputs": [
+        {
+          "sampler_name": "In",
+          "target": "swap3"
+        },
+        {
+          "sampler_name": "Brightness",
+          "target": "swap1"
+        }
+      ],
+      "output": "swap2"
+    },
+    {
+      "vertex_shader": "minecraft:post/sobel",
+      "fragment_shader": "chronoelegy:post/motion_blur",
+      "inputs": [
+        {
+          "sampler_name": "In",
+          "target": "swap2"
+        }
+      ],
+      "output": "minecraft:main",
+      "uniforms": [
+        {
+          "name": "MotionDir",
+          "type": "vec2"
+        }
+      ]
+    }
+  ]
+}

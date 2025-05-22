@@ -1,0 +1,15 @@
+{
+  "menu.game.new": "New Game",
+  "menu.game.continue": "Continue Game",
+  "menu.game.edit": "Edit Map",
+  "menu.resetTitle": "Are you sure you want to reset your progress?",
+  "menu.resetWarning": "Your current game will be lost forever! (A long time!)",
+
+  "block.chronoelegy.grandfather_clock": "Grandfather Clock",
+  "item.chronoelegy.grandfather_clock": "Grandfather Clock",
+  "block.chronoelegy.table": "Table",
+  "item.chronoelegy.table": "Table",
+  "block.chronoelegy.cuckoo_clock": "Cuckoo Clock",
+  "item.chronoelegy.cuckoo_clock": "Cuckoo Clock",
+  "item.chronoelegy.pocket_watch": "Pocket Watch"
+}

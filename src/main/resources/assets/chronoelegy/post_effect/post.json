@@ -92,7 +92,7 @@
         {
           "name": "BlurDir",
           "type": "vec2",
-          "values": [1, 0]
+          "values": [2, 0]
         }
       ]
     },
@@ -110,7 +110,7 @@
         {
           "name": "BlurDir",
           "type": "vec2",
-          "values": [0, 1]
+          "values": [0, 2]
         }
       ]
     },

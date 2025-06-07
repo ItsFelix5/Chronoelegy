@@ -3,15 +3,22 @@
   "package": "chronoelegy.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "ClientWorldMixin",
     "EntityMixin",
-    "MobEntityMixin"
+    "LivingEntityMixin",
+    "MobEntityMixin",
+    "PlayerEntityMixin",
+    "ServerPlayNetworkHandlerMixin"
   ],
   "client": [
     "CameraMixin",
+    "GameMenuScreenMixin",
     "GameRendererMixin",
+    "HeldItemRendererMixin",
     "HudMixin",
     "ItemRendererMixin",
     "MinecraftClientMixin",
+    "MouseMixin",
     "ScreenMixin",
     "TitleScreenMixin"
   ],

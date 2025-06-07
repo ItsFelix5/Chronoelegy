@@ -1,12 +1,17 @@
 package chronoelegy.mixin;
 
 import chronoelegy.Main;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.mojang.blaze3d.systems.RenderPass;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.gl.PostEffectProcessor;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.Pool;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,20 +20,29 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Objects;
 import java.util.function.Consumer;
-
-import static chronoelegy.Main.client;
 
 @Mixin(GameRenderer.class)
 public abstract class GameRendererMixin {
     @Shadow @Final private Pool pool;
     @Shadow @Final private Camera camera;
-
+    @Shadow @Final private MinecraftClient client;
     @Unique
     private float strength = 0.0f;
+
+    @Inject(method = "bobView", at = @At("HEAD"), cancellable = true)
+    private void bobView(MatrixStack matrices, float tickProgress, CallbackInfo ci) {
+        ci.cancel();
+        if (!(client.getCameraEntity() instanceof AbstractClientPlayerEntity abstractClientPlayerEntity)) return;
+        float var7 = abstractClientPlayerEntity.distanceMoved - abstractClientPlayerEntity.lastDistanceMoved;
+        float g = -(abstractClientPlayerEntity.distanceMoved + var7 * tickProgress) / 2F;
+        float h = MathHelper.lerp(tickProgress, abstractClientPlayerEntity.lastStrideDistance, abstractClientPlayerEntity.strideDistance);
+        matrices.translate(MathHelper.sin(g * (float) Math.PI) * h * 0.5F, -Math.abs(MathHelper.cos(g * (float) Math.PI) * h), 0.0F);
+        matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(MathHelper.sin(g * (float) Math.PI) * h * 3.0F));
+        matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(Math.abs(MathHelper.cos(g * (float) Math.PI - 0.2F) * h) * 5.0F));
+    }
 
     @Inject(method = "renderWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", ordinal = 1))
     private void depth(RenderTickCounter renderTickCounter, CallbackInfo ci) {
@@ -42,9 +56,22 @@ public abstract class GameRendererMixin {
         if(strength > 0) post("time_stop", pass -> pass.setUniform("Strength", strength));
     }
 
-    @Inject(method = "getFov", at = @At("RETURN"), cancellable = true)
-    private void getFov(Camera camera, float tickProgress, boolean changingFov, CallbackInfoReturnable<Float> cir) {
-        cir.setReturnValue(MathHelper.lerp(Main.lerpTime, cir.getReturnValueF(), 30));
+    @ModifyReturnValue(method = "getFov", at = @At("RETURN"))
+    private float getFov(float original) {
+        return MathHelper.lerp(Main.lerpTime, original, 30);
+    }
+
+    @Unique
+    private float roll = 0F;
+
+    @Inject(method = "tiltViewWhenHurt", at = @At("HEAD"))
+    private void tiltViewWhenHurt(MatrixStack matrices, float tickProgress, CallbackInfo ci) {
+        roll = Math.clamp(roll + tickProgress * (Main.wallRunning? Main.rollLeft?3F:-3F : Main.rollLeft?-3F:3F), -30F, 30F);
+        if(!Main.wallRunning) {
+            if(Main.rollLeft) roll = Math.max(0F, roll);
+            else roll = Math.min(0F, roll);
+        }
+        matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(roll));
     }
 
     @Unique

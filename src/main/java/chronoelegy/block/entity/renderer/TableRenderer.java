@@ -2,6 +2,7 @@ package chronoelegy.block.entity.renderer;
 
 import chronoelegy.Main;
 import chronoelegy.block.entity.TableBlockEntity;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
@@ -13,8 +14,6 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 
-import static chronoelegy.Main.client;
-
 public class TableRenderer implements BlockEntityRenderer<TableBlockEntity> {
     private final BlockEntityRendererFactory.Context context;
 
@@ -24,6 +23,7 @@ public class TableRenderer implements BlockEntityRenderer<TableBlockEntity> {
 
     @Override
     public void render(TableBlockEntity entity, float tickProgress, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay, Vec3d cameraPos) {
+        MinecraftClient client = MinecraftClient.getInstance();
         ItemStack stack = entity.getItem();
         if(stack.isEmpty()) {
             if(client.crosshairTarget instanceof BlockHitResult target && entity.getPos().equals(target.getBlockPos()) && !client.player.getMainHandStack().isEmpty()) {

@@ -1,5 +1,6 @@
 package chronoelegy.mixin;
 
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ConfirmScreen;
 import net.minecraft.client.gui.screen.Screen;
@@ -17,7 +18,6 @@ import org.apache.commons.io.FileUtils;
 import org.spongepowered.asm.mixin.*;
 
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
@@ -32,14 +32,11 @@ public abstract class TitleScreenMixin extends Screen {
 
     /**
      * @author ItsFelix5
-     * @reason mod?
+     * @reason mod
      */
     @Overwrite
     public void init() {
         assert this.client != null;
-
-        this.client.createIntegratedServerLoader().start("Map", () -> this.client.setScreen(this));
-        if(true) return;
 
         boolean mutableGameExists = false;
         try (LevelStorage.Session session = this.client.getLevelStorage().createSessionWithoutSymlinkCheck("World")) {
@@ -80,18 +77,19 @@ public abstract class TitleScreenMixin extends Screen {
         ).active = gameExists;
         y += 24;
         this.addDrawableChild(
-                ButtonWidget.builder(Text.translatable("menu.game.edit"), button -> this.client.createIntegratedServerLoader().start("Map", () -> this.client.setScreen(this)))
-                        .dimensions(this.width / 2 - 100, y, 200, 20)
-                        .build()
+                ButtonWidget.builder(Text.translatable("menu.game.edit"), button -> {
+                            makeMap();
+                            this.client.createIntegratedServerLoader().start("Map", () -> this.client.setScreen(this));
+                        }).dimensions(this.width / 2 - 100, y, 200, 20).build()
         );
         y += 24;
         this.addDrawableChild(
-                ButtonWidget.builder(Text.literal("GitHub"), button -> Util.getOperatingSystem().open("TODO"))
+                ButtonWidget.builder(Text.literal("GitHub"), button -> Util.getOperatingSystem().open("https://github.com/ItsFelix5/Chronoelegy"))
                         .dimensions(this.width / 2 - 100, y, 98, 20)
                         .build()
         );
         this.addDrawableChild(
-                ButtonWidget.builder(Text.literal("Modrinth"), button -> Util.getOperatingSystem().open("TODO")).dimensions(this.width / 2 + 2, y, 98, 20).build()
+                ButtonWidget.builder(Text.literal("Modrinth"), button -> Util.getOperatingSystem().open("https://modrinth.com/mod/chronoelegy")).dimensions(this.width / 2 + 2, y, 98, 20).build()
         );
         y += 24;
         this.addDrawableChild(
@@ -111,20 +109,20 @@ public abstract class TitleScreenMixin extends Screen {
     private void createWorld() {
         assert this.client != null;
 
-        Path map = client.getLevelStorage().resolve("Map");
-        Path world = client.getLevelStorage().resolve("World");
-
         try {
+            makeMap();
+            Path map = client.getLevelStorage().resolve("Map");
+            Path world = client.getLevelStorage().resolve("World");
+
             FileUtils.deleteDirectory(world.toFile());
 
-            for (Path src : new Path[]{map.resolve("data"), map.resolve("entities"), map.resolve("region")})
-                try (Stream<Path> stream = Files.walk(src)) {
+            for (String src : new String[]{"entities", "region", "data"})
+                try (Stream<Path> stream = Files.walk(map.resolve(src))) {
                     stream.forEach(toCopy -> {
                         try {
                             Path target = world.resolve(map.relativize(toCopy));
                             target.getParent().toFile().mkdirs();
                             Files.copy(toCopy, target);
-                        } catch (FileAlreadyExistsException ignored) {
                         } catch (IOException e) {
                             e.printStackTrace();
                             SystemToast.addWorldAccessFailureToast(this.client, "Map");
@@ -135,9 +133,32 @@ public abstract class TitleScreenMixin extends Screen {
                     SystemToast.addWorldAccessFailureToast(this.client, "Map");
                 }
 
-            Files.copy(map.getParent().resolve("level.dat"), world.resolve("level.dat"));
+            Files.copy(FabricLoader.getInstance().getModContainer("chronoelegy").orElseThrow().findPath("level.dat").orElseThrow(), world.resolve("level.dat"));
 
             this.client.createIntegratedServerLoader().start("World", () -> this.client.setScreen(this));
+        } catch (IOException e) {
+            e.printStackTrace();
+            SystemToast.addWorldAccessFailureToast(this.client, "Map");
+        }
+    }
+
+    @Unique
+    private void makeMap() {
+        Path map = client.getLevelStorage().resolve("Map");
+        if(map.toFile().exists()) return;
+        Path original = FabricLoader.getInstance().getModContainer("chronoelegy").orElseThrow().findPath("Map").orElseThrow();
+
+        try (Stream<Path> stream = Files.walk(original)) {
+            stream.forEach(toCopy -> {
+                try {
+                    Path target = map.resolve(original.relativize(toCopy).toString());
+                    target.getParent().toFile().mkdirs();
+                    Files.copy(toCopy, target);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    SystemToast.addWorldAccessFailureToast(this.client, "Map");
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
             SystemToast.addWorldAccessFailureToast(this.client, "Map");

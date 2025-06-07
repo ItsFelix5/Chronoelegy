@@ -1,10 +1,12 @@
 package chronoelegy.mixin;
 
+import chronoelegy.Main;
 import chronoelegy.block.ModBlocks;
 import chronoelegy.block.entity.TableBlockEntity;
 import chronoelegy.item.ModItems;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.render.RenderTickCounter;
@@ -22,18 +24,18 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(InGameHud.class)
-public class HudMixin {
+public abstract class HudMixin {
     @Shadow @Final private static Identifier CROSSHAIR_TEXTURE;
     @Shadow @Final private MinecraftClient client;
-    // Can't use Main.id as that would init Main.client too early
+    @Shadow public abstract TextRenderer getTextRenderer();
     @Unique
-    private static final Identifier TIME_CROSSHAIR_TEXTURE = Identifier.of("chronoelegy", "hud/time_crosshair");
+    private static final Identifier TIME_CROSSHAIR_TEXTURE = Main.id("hud/time_crosshair");
     @Unique
-    private static final Identifier PICKUP_CROSSHAIR_TEXTURE = Identifier.of("chronoelegy", "hud/pickup_crosshair");
+    private static final Identifier PICKUP_CROSSHAIR_TEXTURE = Main.id("hud/pickup_crosshair");
     @Unique
-    private static final Identifier PLACE_CROSSHAIR_TEXTURE = Identifier.of("chronoelegy", "hud/place_crosshair");
+    private static final Identifier PLACE_CROSSHAIR_TEXTURE = Main.id("hud/place_crosshair");
     @Unique
-    private static final Identifier WRENCH_CROSSHAIR_TEXTURE = Identifier.of("chronoelegy", "hud/wrench_crosshair");
+    private static final Identifier WRENCH_CROSSHAIR_TEXTURE = Main.id("hud/wrench_crosshair");
 
     @Inject(method = "renderCrosshair", at = @At("HEAD"), cancellable = true)
     private void renderCrosshair(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
@@ -62,5 +64,12 @@ public class HudMixin {
     @Inject(method = "renderMainHud", at = @At("HEAD"), cancellable = true)
     private void renderMainHud(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
         if(!client.player.isCreative()) ci.cancel();
+        if(Main.speedrunMode) {
+            int seconds = Main.ticks / 20;
+            int minutes = seconds / 60;
+            seconds = seconds % 60;
+            context.drawText(getTextRenderer(), minutes + ":" + seconds, 10, 10, -1, true);
+            context.drawText(getTextRenderer(), Math.round(client.player.getVelocity().length() * 2000) / 100 + "m/s", 10, 20, -1, true);
+        }
     }
 }

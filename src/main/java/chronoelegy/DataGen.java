@@ -9,7 +9,6 @@ import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.minecraft.block.Block;
 import net.minecraft.client.data.*;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
@@ -33,10 +32,14 @@ public class DataGen implements DataGeneratorEntrypoint {
 
         @Override
         public void generateBlockStateModels(BlockStateModelGenerator generator) {
-            for (Block block : new Block[]{ModBlocks.GRANDFATHER_CLOCK, ModBlocks.CUCKOO_CLOCK}) {
-                generator.registerNorthDefaultHorizontalRotation(block);
-                generator.registerParentedItemModel(block, ModelIds.getBlockModelId(block));
-            }
+            generator.registerNorthDefaultHorizontalRotation(ModBlocks.CUCKOO_CLOCK);
+            generator.registerParentedItemModel(ModBlocks.CUCKOO_CLOCK, ModelIds.getBlockModelId(ModBlocks.CUCKOO_CLOCK));
+
+            generator.registerNorthDefaultHorizontalRotation(ModBlocks.GRANDFATHER_CLOCK);
+            generator.registerParentedItemModel(ModBlocks.GRANDFATHER_CLOCK, ModelIds.getBlockModelId(ModBlocks.GRANDFATHER_CLOCK));
+
+            generator.registerSimpleState(ModBlocks.GRAPPLE_POINT);
+            generator.registerParentedItemModel(ModBlocks.GRAPPLE_POINT, ModelIds.getBlockModelId(ModBlocks.GRAPPLE_POINT));
 
             JsonObject parentObject;
             try {
@@ -75,12 +78,19 @@ public class DataGen implements DataGeneratorEntrypoint {
             }
 
             generator.blockStateCollector.accept(VariantsBlockModelDefinitionCreator.of(ModBlocks.TABLE).with(models));
+
+            generator.registerBuiltinWithParticle(ModBlocks.CHECKPOINT, ModBlocks.CHECKPOINT);
+            generator.registerItemModel(ModBlocks.CHECKPOINT);
+
+            generator.registerSimpleCubeAll(ModBlocks.JUMP_PAD);
+            generator.registerItemModel(ModBlocks.JUMP_PAD);
         }
 
         @Override
         public void generateItemModels(ItemModelGenerator generator) {
             generator.register(ModItems.POCKET_WATCH);
             generator.register(ModItems.BROKEN_POCKET_WATCH);
+            generator.register(ModItems.BLADE);
         }
     }
 }

@@ -11,5 +11,5 @@ void main() {
     vec3 color = texture(InSampler, texCoord).rgb;
     float colorIntensity = length(color) * 0.8;
 
-    fragColor = vec4(color + texture(BrightnessSampler, texCoord).rgb * pow(0.08, colorIntensity), 1.0);
+    fragColor = vec4(color + texture(BrightnessSampler, texCoord).rgb * pow(0.1, colorIntensity), 1.0);
 }

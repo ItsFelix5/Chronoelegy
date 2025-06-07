@@ -1,6 +1,7 @@
 package chronoelegy.screen;
 
 import chronoelegy.Main;
+import net.minecraft.client.MinecraftClient;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWImage;
@@ -12,15 +13,13 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
-import static chronoelegy.Main.client;
-
 public class Cursors {
     private static final Map<String, Long> cursors = new HashMap<>();
 
     public static long get(String name) {
         return cursors.computeIfAbsent(name, key->{
             try {
-                BufferedImage image = ImageIO.read(client.getResourceManager().open(Main.id("textures/cursor/"+key+".png")));
+                BufferedImage image = ImageIO.read(MinecraftClient.getInstance().getResourceManager().open(Main.id("textures/cursor/"+key+".png")));
                 int w = image.getWidth();
                 int h = image.getHeight();
                 int[] pixels = new int[w * h];

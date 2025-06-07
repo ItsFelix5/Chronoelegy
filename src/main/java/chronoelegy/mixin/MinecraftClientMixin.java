@@ -17,21 +17,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(MinecraftClient.class)
 public abstract class MinecraftClientMixin {
     @Shadow @Final public GameOptions options;
-
     @Shadow @Nullable public ClientPlayerEntity player;
-
     @Shadow @Nullable public ClientPlayerInteractionManager interactionManager;
-
     @Shadow protected abstract boolean doAttack();
-
     @Shadow protected abstract void doItemUse();
-
     @Shadow @Final public Mouse mouse;
-
     @Shadow @Nullable public Screen currentScreen;
-
     @Shadow protected abstract void handleBlockBreaking(boolean breaking);
-
     @Shadow private int itemUseCooldown;
 
     @Inject(method = "handleInputEvents", at = @At("HEAD"), cancellable = true)

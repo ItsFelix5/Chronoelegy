@@ -11,5 +11,16 @@
   "item.chronoelegy.table": "Table",
   "block.chronoelegy.cuckoo_clock": "Cuckoo Clock",
   "item.chronoelegy.cuckoo_clock": "Cuckoo Clock",
-  "item.chronoelegy.pocket_watch": "Pocket Watch"
+  "item.chronoelegy.pocket_watch": "Pocket Watch",
+  "item.chronoelegy.broken_pocket_watch": "Broken Pocket Watch",
+  "item.chronoelegy.blade": "Blade",
+  "block.chronoelegy.grapple_point": "Grapple Point",
+  "item.chronoelegy.grapple_point": "Grapple Point",
+  "block.chronoelegy.checkpoint": "Checkpoint",
+  "item.chronoelegy.checkpoint": "Checkpoint",
+
+  "itemGroup.chronoelegy": "Chronoelegy",
+  "msg.checkpoint": "Checkpoint!",
+  "checkbox.speedrunMode": "Speedrun Mode",
+  "attribute.name.jumps": "Jumps"
 }

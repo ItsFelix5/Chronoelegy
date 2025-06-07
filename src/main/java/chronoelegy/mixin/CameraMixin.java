@@ -16,7 +16,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class CameraMixin {
     @Shadow protected abstract void setPos(Vec3d pos);
     @Shadow private Vec3d pos;
-
     @Shadow protected abstract void setRotation(float yaw, float pitch);
     @Shadow private float yaw;
     @Shadow private float pitch;

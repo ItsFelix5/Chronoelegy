@@ -39,6 +39,7 @@ public class DialogueScreen extends Screen {
         optionsWidth = 0;
         for (Pair<Text, Dialogue> option : dialogue.options) optionsWidth = Math.max(optionsWidth, textRenderer.getWidth(option.getLeft()));
         optionsWidth += width / 10;
+        GLFW.glfwSetCursor(client.getWindow().getHandle(), Cursors.get("arrow"));
     }
 
     @Override
@@ -149,6 +150,7 @@ public class DialogueScreen extends Screen {
     @Override
     public void close() {
         onClose.run();
+        GLFW.glfwSetCursor(client.getWindow().getHandle(), 0L);
         super.close();
     }
 

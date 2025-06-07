@@ -33,12 +33,13 @@ public class BackgroundRenderer {
         context.fillGradient(0, height - height / 3, width, height, 0xFF413c60, 0xFF976b8f);
         context.drawTexture(RenderLayer::getGuiTextured, MOON_TEXTURE, width - width / 7, 15, 0.0F, 0.0F, 38, 38, 38, 38, 38, 38);
 
-        stars.forEach(s->{
+        for (int i = 0; i < 100; i++) {
+            Star s = stars.get(i);
             int color = ColorHelper.getWhite(Math.abs(s.twinkle));
 
             RenderLayer renderLayer = RenderLayer.getGuiTextured(STAR_TEXTURE);
             Matrix4f matrix4f = context.getMatrices().peek().getPositionMatrix();
-            context.draw(vertexConsumers->{
+            context.draw(vertexConsumers -> {
                 VertexConsumer vertexConsumer = vertexConsumers.getBuffer(renderLayer);
                 float u = Math.floorDiv(s.i, 4) / 4F;
                 float v = (s.i % 4F) / 4F;
@@ -49,12 +50,13 @@ public class BackgroundRenderer {
             });
 
             s.x += delta * s.speed;
-            if(s.x > 1F) s.x = -0.1F;
+            if (s.x > 1F) stars.set(i, new Star(-0.1F, linearRandom() / 1000F, random.nextInt(16),
+                    random.nextInt(1, 7), linearRandom() / 10000000F, random.nextFloat(-1, 1)));
             s.twinkle += delta / 100;
-            if(s.twinkle > 1) s.twinkle -= 2;
-        });
+            if (s.twinkle > 1) s.twinkle -= 2;
+        }
 
-        for (int i = 0; i < mountains.size(); i++) {
+        for (int i = 0; i < 10; i++) {
             Mountain m = mountains.get(i);
             RenderLayer renderLayer = RenderLayer.getGuiTextured(MOUNTAIN_TEXTURE);
             Matrix4f matrix4f = context.getMatrices().peek().getPositionMatrix();
@@ -72,9 +74,7 @@ public class BackgroundRenderer {
 
             m.x += delta / 500 / m.z;
             if(m.x > 1) {
-                mountains.remove(i);
-                i--;
-                mountains.add(new Mountain(-0.5F, random.nextInt(5,16), random.nextInt(4)));
+                mountains.set(i, new Mountain(-0.5F, random.nextInt(5,16), random.nextInt(4)));
             }
         }
     }

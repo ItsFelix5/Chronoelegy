@@ -8,6 +8,7 @@ import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
@@ -27,8 +28,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
 import net.minecraft.world.tick.ScheduledTickView;
 import org.jetbrains.annotations.Nullable;
-
-import static chronoelegy.Main.client;
 
 public class TableBlock extends Block implements BlockEntityProvider {
     private static final VoxelShape SW = VoxelShapes.cuboid(0.0625, 0, 0.8125, 0.1875, 0.75, 0.9375);
@@ -96,6 +95,7 @@ public class TableBlock extends Block implements BlockEntityProvider {
         ItemStack stack = entity.getItem();
         if (!stack.isEmpty() && player.getMainHandStack().isEmpty()) {
             if(stack.isOf(ModItems.BROKEN_POCKET_WATCH)) {
+                MinecraftClient client = MinecraftClient.getInstance();
                 if(client.isOnThread()) client.setScreen(new RepairScreen(entity));
             } else {
                 entity.setItem(ItemStack.EMPTY);

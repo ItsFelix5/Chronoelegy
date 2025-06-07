@@ -1,7 +1,8 @@
 {
+	"credit": "Made with Blockbench",
 	"textures": {
-		"particle": "minecraft:block/spruce_log",
-		"1": "minecraft:block/spruce_log"
+		"1": "block/spruce_log",
+		"particle": "block/spruce_log"
 	},
 	"elements": [
 		{
@@ -87,6 +88,10 @@
 		"ground": {
 			"translation": [-3.25, 0, 0],
 			"scale": [0.45, 0.45, 0.45]
+		},
+		"gui": {
+			"rotation": [22, 25, 0],
+			"scale": [0.73, 0.73, 0.73]
 		}
 	}
 }

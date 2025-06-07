@@ -7,6 +7,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.texture.Sprite;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec2f;
@@ -33,18 +34,13 @@ public class RepairScreen extends Screen {
         Main.cameraPos = entity.getPos().toCenterPos().add(0, 2, 0);
         Main.cameraYaw = (entity.getCachedState().get(Properties.HORIZONTAL_FACING).getHorizontalQuarterTurns() * 90 + 180) % 360;
         Main.customCamera = true;
-
-        parts.add(new Part(0, 5, 40, "broken_gear"));
-        parts.add(new Part(10, 0, 30, "gear2"));
-        parts.add(new Part(0, 0, 40, "gear3"));
-        parts.add(new Part(0, 12, 30, "gear1"));
-        parts.add(new Part(0, 0, 50, "back"));
     }
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         for (int i = parts.size() - 1; i >= 0; i--) {
             Part part = parts.get(i);
+            if(! part.draggable) continue;
             if(mouseX > part.x && mouseX <= part.x + part.size && mouseY > part.y && mouseY <= part.y + part.size) {
                 dragging = i;
                 dragOffset = new Vec2f((float) mouseX - part.x, (float) mouseY - part.y);
@@ -88,7 +84,20 @@ public class RepairScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        parts.forEach(p->p.render(context));
+        if(Main.lerpTime == 1F && parts.isEmpty()) {
+            entity.setItem(ItemStack.EMPTY);
+
+            parts.add(new Part(0, 0, 140, "front"));
+            parts.add(new Part(0, 5, 40, "broken_gear"));
+            parts.add(new Part(10, 0, 30, "gear2"));
+            parts.add(new Part(11, 20, 40, "gear3"));
+            parts.add(new Part(22, 12, 30, "gear1"));
+            parts.add(new Part(10, 0, 30, "gear2"));
+            parts.add(new Part(16, 20, 40, "gear3"));
+            parts.add(new Part(0, 21, 30, "gear1"));
+            parts.add(new Part(0, 0, 140, "back"));
+            parts.getFirst().draggable = false;
+        } else parts.forEach(p->p.render(context));
     }
 
     @Override
@@ -100,10 +109,11 @@ public class RepairScreen extends Screen {
         public float x, y;
         public final float size;
         private final Sprite sprite;
+        public boolean draggable = true;
 
         public Part(float x, float y, int size, String name) {
-            this.x = x;
-            this.y = y;
+            this.x = width / 2F - size / 2F + x;
+            this.y = height / 2F - size / 2F + y;
             this.size = size;
             sprite = client.getGuiAtlasManager().getSprite(Main.id("parts/" + name));
         }

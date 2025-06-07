@@ -9,14 +9,19 @@ import java.util.List;
 public class Dialogue {
     public final Text text;
     public final List<Pair<Text, Dialogue>> options = new ArrayList<>();
-    public final Runnable cb = () -> {};
+    public Runnable cb = () -> {};
 
     public Dialogue(Text text) {
         this.text = text;
     }
 
-    public static Dialogue create(boolean skippable, Text text) {
+    public static Dialogue.Root create(boolean skippable, Text text) {
         return new Root(skippable, text);
+    }
+
+    public Dialogue callback(Runnable cb) {
+        this.cb = cb;
+        return this;
     }
 
     public Dialogue option(Text optionText, Dialogue dialogue) {
